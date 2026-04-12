@@ -1,0 +1,10 @@
+# {{SITE_NAME}}
+
+> {{SITE_DESCRIPTION}}
+
+This site publishes a machine-readable skill file for AI agents. If you are an agent writing content for this site, read the skill file first:
+
+- Skill manual: {{SITE_URL}}/skill.md
+- Live blog state: {{SITE_URL}}/skill.json
+
+The skill manual explains the post schema, quality rules, and workflow. The JSON file contains the current list of published and scheduled posts so you can avoid duplication and find internal linking opportunities.
