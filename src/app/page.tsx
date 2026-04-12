@@ -35,13 +35,13 @@ export default function Home() {
           {/* Pitch */}
           <div className="text-center">
             <h1 className="text-5xl font-semibold leading-none tracking-tight text-neutral-950 md:text-7xl dark:text-neutral-50">
-              A blog template your
-              <br className="hidden sm:block" /> LLM can write for you.
+              Your blog, written
+              <br className="hidden sm:block" /> by your agent.
             </h1>
             <p className="mx-auto mt-6 max-w-2xl text-lg text-neutral-600 md:text-xl dark:text-neutral-400">
-              Statically generated Next.js blog with scheduled publishing and a
-              machine-readable skill layer. Clone it, configure four env vars,
-              hand the URL to any agent.
+              Point Claude at one URL. It reads the manual, writes posts that
+              match your style, and schedules them to publish. You review, or you
+              don&apos;t. Your call.
             </p>
           </div>
 
@@ -53,7 +53,9 @@ export default function Home() {
                 I&apos;m a human
               </p>
               <p className="mt-3 text-sm text-neutral-600 dark:text-neutral-400">
-                Clone the repo, set four env vars, paste a URL into your agent.
+                Clone it, tell it what your blog is about, and hand the URL to
+                your favourite agent. Four environment variables, about five
+                minutes.
               </p>
               <div className="mt-6 flex flex-col gap-2">
                 <a
@@ -68,14 +70,14 @@ export default function Home() {
                   href="/docs"
                   className="flex h-10 items-center justify-center rounded-md border border-neutral-200 px-4 text-sm font-medium text-neutral-700 transition-colors duration-150 hover:bg-neutral-100 dark:border-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-900"
                 >
-                  Read the docs
+                  How it works
                 </Link>
                 {latestPost && (
                   <Link
                     href={`/blog/${latestPost.slug}`}
                     className="flex h-10 items-center justify-center rounded-md border border-neutral-200 px-4 text-sm font-medium text-neutral-700 transition-colors duration-150 hover:bg-neutral-100 dark:border-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-900"
                   >
-                    See a live post
+                    See it in action
                   </Link>
                 )}
               </div>
@@ -87,16 +89,16 @@ export default function Home() {
                 I&apos;m an agent
               </p>
               <p className="mt-3 text-sm text-neutral-600 dark:text-neutral-400">
-                Paste this into Claude, Cursor, or any agent with web access. It
-                reads the install manual, detects your project context, and sets
-                forgeblog up.
+                One URL. Paste it into Claude, Cursor, Cowork, or anything else
+                with web access. I&apos;ll detect whether you&apos;re starting fresh or
+                adding to an existing Next.js project, and set everything up.
               </p>
               <div className="mt-6">
                 <CopyCommand text={installCommand} size="large" />
               </div>
               <div className="mt-6">
                 <p className="text-xs font-medium uppercase tracking-widest text-neutral-500 dark:text-neutral-400">
-                  Or try
+                  Once it&apos;s installed
                 </p>
                 <div className="mt-3 space-y-2">
                   {helperPrompts.map((prompt) => (
@@ -144,7 +146,8 @@ export default function Home() {
             </Link>
           </div>
           <p>
-            Built by {site.author.name} &middot; MIT licensed
+            Built by Coen Hewes in Melbourne. MIT licensed, free forever, no
+            strings.
           </p>
         </div>
       </footer>
