@@ -34,6 +34,11 @@ yarn-error.log*
 .env*
 !.env.example
 
+# Generated skill files — built from *.template on every build
+public/skill.md
+public/skill.json
+public/llms.txt
+
 # vercel
 .vercel
 
