@@ -38,6 +38,9 @@ yarn-error.log*
 public/skill.md
 public/skill.json
 public/llms.txt
+public/install.md
+public/install.sh
+public/install-manifest.json
 
 # vercel
 .vercel

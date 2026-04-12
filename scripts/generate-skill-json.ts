@@ -1,5 +1,12 @@
-import { writeFileSync, readFileSync, existsSync, mkdirSync } from "node:fs";
-import { resolve, dirname, join } from "node:path";
+import {
+  writeFileSync,
+  readFileSync,
+  existsSync,
+  mkdirSync,
+  readdirSync,
+  statSync,
+} from "node:fs";
+import { resolve, dirname, join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 import { blogPosts } from "@/content/blogPosts";
 import { internalLinkRules } from "@/content/internalLinks";
@@ -129,24 +136,105 @@ function resolveTemplate(templatePath: string, outputPath: string): void {
     .replaceAll("{{SITE_NICHE}}", site.niche)
     .replaceAll("{{SITE_AUDIENCE}}", site.audience)
     .replaceAll("{{SITE_TONE}}", site.tone)
+    .replaceAll("{{REPO_URL}}", site.repoUrl)
     .replaceAll("{{GENERATED_AT}}", generatedAt)
     .replaceAll("{{PUBLISHED_COUNT}}", String(published.length))
     .replaceAll("{{SCHEDULED_COUNT}}", String(scheduled.length));
   writeFileSync(outputPath, resolved);
 }
 
+resolveTemplate(join(PUBLIC, "skill.md.template"), join(PUBLIC, "skill.md"));
+resolveTemplate(join(PUBLIC, "llms.txt.template"), join(PUBLIC, "llms.txt"));
 resolveTemplate(
-  join(PUBLIC, "skill.md.template"),
-  join(PUBLIC, "skill.md"),
+  join(PUBLIC, "install.md.template"),
+  join(PUBLIC, "install.md"),
+);
+resolveTemplate(
+  join(PUBLIC, "install.sh.template"),
+  join(PUBLIC, "install.sh"),
 );
 
-resolveTemplate(
-  join(PUBLIC, "llms.txt.template"),
-  join(PUBLIC, "llms.txt"),
+// ---------- build install-manifest.json ----------
+
+const SKILL_LAYER_DIRS = [
+  "src/lib",
+  "src/content",
+  "src/components/blog",
+  "src/components/StructuredData.tsx",
+  "src/app/blog",
+  "src/app/sitemap.ts",
+  "src/app/robots.ts",
+  "scripts",
+  ".github/workflows",
+];
+
+const TEMPLATE_GLOBS = [
+  "public/skill.md.template",
+  "public/llms.txt.template",
+  "public/install.md.template",
+  "public/install.sh.template",
+];
+
+function collectFiles(base: string, dir: string): string[] {
+  const fullPath = join(base, dir);
+  if (!existsSync(fullPath)) return [];
+  const stat = statSync(fullPath);
+  if (stat.isFile()) return [dir];
+  const results: string[] = [];
+  for (const entry of readdirSync(fullPath, { withFileTypes: true })) {
+    const entryPath = join(dir, entry.name);
+    if (entry.isDirectory()) {
+      results.push(...collectFiles(base, entryPath));
+    } else if (entry.isFile() && !entry.name.startsWith(".")) {
+      results.push(entryPath);
+    }
+  }
+  return results;
+}
+
+const manifestFiles: string[] = [];
+for (const dir of SKILL_LAYER_DIRS) {
+  manifestFiles.push(...collectFiles(ROOT, dir));
+}
+for (const tpl of TEMPLATE_GLOBS) {
+  if (existsSync(join(ROOT, tpl))) manifestFiles.push(tpl);
+}
+manifestFiles.sort();
+
+const installManifest = {
+  generatedAt,
+  files: manifestFiles,
+  dependencies: [] as string[],
+  devDependencies: ["tsx"],
+  envVars: [
+    "SITE_URL",
+    "SITE_NAME",
+    "SITE_AUTHOR_NAME",
+    "SITE_AUTHOR_URL",
+    "SITE_REPO_URL",
+    "SITE_NICHE",
+    "SITE_AUDIENCE",
+    "SITE_TONE",
+    "SITE_DESCRIPTION",
+  ],
+  scripts: {
+    "generate:skill": "tsx scripts/generate-skill-json.ts",
+    prebuild: "npm run generate:skill",
+  },
+  postInstall: [
+    "Copy .env.example to .env.local and fill in your site details",
+    "Run npm run dev to verify the install",
+    "Set up a Vercel Deploy Hook and add it as a GitHub secret for scheduled publishing",
+  ],
+};
+
+writeFileSync(
+  join(PUBLIC, "install-manifest.json"),
+  JSON.stringify(installManifest, null, 2) + "\n",
 );
 
 // ---------- summary ----------
 
 console.log(
-  `Generated public/skill.json (${published.length} published, ${scheduled.length} scheduled, ${serialisedRules.length} link rules)`,
+  `Generated skill.json (${published.length} published, ${scheduled.length} scheduled, ${serialisedRules.length} link rules), install-manifest.json (${manifestFiles.length} files)`,
 );
