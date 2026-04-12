@@ -1,6 +1,6 @@
 # forgeblog
 
-A Next.js blog template with automated scheduled publishing — no CMS, no database, no manual deploy steps.
+A Next.js blog template with automated scheduled publishing and a built-in agent skill layer — the first blog starter designed for vibe-coding with LLMs.
 
 <!-- screenshot placeholder: add a screenshot or GIF of the blog here -->
 
@@ -60,9 +60,25 @@ Open `src/content/blogPosts.ts` and add an object to the array. Here's a minimal
 
 See `src/lib/types.ts` for the full `BlogPost` type with all optional fields (stats, checklist, takeaways, FAQs).
 
-## Using an LLM to generate posts
+## Agent-readable skill layer (the vibe-coding workflow)
 
-The `BlogPost` type is designed to work as a prompt. Copy the type definition from `src/lib/types.ts` and ask any LLM to generate a post object conforming to it:
+This template ships with a machine-readable instruction manual at `/skill.md` and a live state file at `/skill.json`. Together they let any LLM agent — Claude Code, Cursor, ChatGPT, Cowork, or anything else — write and schedule posts without needing you to explain the project.
+
+**Setup (one time):** Fill in the `SITE_NICHE`, `SITE_AUDIENCE`, `SITE_TONE`, and `SITE_DESCRIPTION` fields in your `.env`. These are baked into the skill manual at build time.
+
+**Usage:** Paste this into your agent:
+
+> *Read https://yourblog.com/skill.md and follow the instructions to write and commit 5 posts about [topic], one per week starting next Monday.*
+
+That's it. The agent fetches the manual, fetches the live JSON state to see what's already been written, drafts posts that match the schema, appends them to `blogPosts.ts`, and commits. The scheduled deploy workflow takes it from there.
+
+**How it stays fresh:** `skill.json` is regenerated on every build from the actual contents of `blogPosts.ts`, so it always reflects the live state of the site — existing posts, scheduled posts, tag frequencies, and linking rules. Agents that fetch it get the current picture, not a stale snapshot.
+
+**Customising the skill manual:** Edit `public/skill.md.template`. The `{{TOKEN}}` placeholders are replaced at build time from your env vars. The rest of the file is yours to tune — add site-specific rules, prohibited topics, house style notes, whatever your blog needs.
+
+## Using an LLM to generate posts (manual workflow)
+
+If you prefer to generate posts manually rather than using the skill layer, the `BlogPost` type works as a prompt. Copy the type definition from `src/lib/types.ts` and ask any LLM to generate a post object conforming to it:
 
 > Generate a blog post as a JSON object matching this TypeScript type: [paste type here]. Topic: "How to set up CI/CD for a static site."
 
