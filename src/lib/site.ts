@@ -7,6 +7,9 @@ export const site = {
   niche: process.env.SITE_NICHE ?? "General",
   audience: process.env.SITE_AUDIENCE ?? "Readers",
   tone: process.env.SITE_TONE ?? "Direct and practical.",
+  repoUrl:
+    process.env.SITE_REPO_URL ??
+    "https://github.com/yourname/forgeblog",
   author: {
     name: process.env.SITE_AUTHOR_NAME ?? "Author",
     url: process.env.SITE_AUTHOR_URL ?? "https://example.com",

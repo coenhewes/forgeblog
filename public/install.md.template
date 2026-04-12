@@ -1,0 +1,101 @@
+---
+name: forgeblog-installer
+version: 1
+description: Install forgeblog into a new or existing project
+homepage: {{SITE_URL}}
+---
+
+# Installing forgeblog
+
+You are an AI agent and a human has asked you to install forgeblog. This file tells you how. Read it fully before running any commands.
+
+## Step 1 — Detect the context
+
+Check the current working directory:
+
+- **Empty or no package.json** — greenfield install (go to Method A)
+- **package.json exists and lists `next` as a dependency** — existing Next.js project (go to Method B)
+- **package.json exists but is not a Next.js project** — stop and tell the human. Forgeblog requires Next.js 15+ App Router. Do not try to install into other frameworks.
+
+## Step 2 — Pick an install method
+
+### Method A — Greenfield (new project)
+
+Use this when the directory is empty or has no package.json.
+
+**Option 1: clone and clean (recommended)**
+
+```bash
+git clone --depth 1 {{REPO_URL}} my-project
+cd my-project
+rm -rf .git
+npm install
+```
+
+**Option 2: curl script**
+
+```bash
+curl -fsSL {{SITE_URL}}/install.sh | bash -s my-project
+cd my-project
+```
+
+Replace `my-project` with whatever directory name the human wants.
+
+After either option, ask the human for these values and write them to `.env.local`:
+
+- `SITE_URL` (their deployed URL, or `http://localhost:3000` for now)
+- `SITE_NAME` (display name of the blog)
+- `SITE_NICHE` (what the blog covers)
+- `SITE_TONE` (writing style guidance for agents)
+
+Then run `npm run dev` to verify the install worked.
+
+### Method B — Existing Next.js project
+
+Use this when the human already has a Next.js site and wants to add the forgeblog content layer.
+
+Do not clone the repo into their directory. Instead:
+
+1. Fetch the file list from `{{SITE_URL}}/install-manifest.json`. This lists exactly which files to copy.
+2. For each file in the manifest, fetch the raw content from the forgeblog repo (clone to a temp directory or use the GitHub raw URL) and write it to the same path in the current project. Do not overwrite existing files without asking the human first.
+3. Install the additional dev dependencies: `npm install -D tsx`
+4. Add the following scripts to their `package.json` (merge, do not replace):
+   - `"generate:skill": "tsx scripts/generate-skill-json.ts"`
+   - `"prebuild": "npm run generate:skill"`
+5. Append these env vars to the human's `.env.local` (or create it):
+   - `SITE_NICHE`
+   - `SITE_AUDIENCE`
+   - `SITE_TONE`
+   - `SITE_DESCRIPTION`
+6. If their `next.config.ts` does not already have `images.remotePatterns` for Unsplash, add it — the seed posts reference Unsplash images.
+7. Show the human a summary of what was added and ask them to run `npm run build` to verify.
+
+Do not modify any of the human's existing pages, components, or config beyond what's listed above. The goal is additive: forgeblog slots alongside their existing setup, it does not replace it.
+
+## Step 3 — Verify
+
+Regardless of method, verify by:
+
+1. Running `npm run build` — it must succeed.
+2. Hitting `http://localhost:3000/skill.md` in the browser — it must return the agent manual with resolved env vars (no `{{...}}` left).
+3. Hitting `http://localhost:3000/skill.json` — it must return valid JSON with the current post list.
+
+If any of those fail, stop and tell the human what went wrong. Do not try to patch it yourself unless the fix is obvious.
+
+## Step 4 — Hand back to the human
+
+Once installed, tell the human:
+
+- Where forgeblog is installed
+- Which env vars still need real values (especially `SITE_URL` once they deploy)
+- The URL they should paste into you for writing posts: `<their-deployed-url>/skill.md`
+- That the scheduled-deploy workflow needs a Vercel Deploy Hook secret set on GitHub before the daily cron will run
+
+Do not start writing blog posts immediately unless the human explicitly asked for that as part of the install.
+
+## Do not
+
+- Do not run `npm install` on an existing project without asking first.
+- Do not overwrite `next.config.ts`, `tailwind.config.ts`, `tsconfig.json`, or `package.json` scripts without showing the human a diff.
+- Do not commit or push anything. Leave the changes staged for the human to review.
+- Do not edit the human's existing blog posts if they have a `blogPosts.ts` already.

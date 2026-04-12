@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+PROJECT_NAME="${1:-forgeblog-site}"
+REPO_URL="{{REPO_URL}}"
+
+if [ -d "$PROJECT_NAME" ]; then
+  echo "Directory $PROJECT_NAME already exists. Aborting."
+  exit 1
+fi
+
+echo "Cloning forgeblog into $PROJECT_NAME..."
+git clone --depth 1 "$REPO_URL" "$PROJECT_NAME"
+rm -rf "$PROJECT_NAME/.git"
+cd "$PROJECT_NAME"
+echo "Installing dependencies..."
+npm install
+echo ""
+echo "Done. Next steps:"
+echo "  1. cd $PROJECT_NAME"
+echo "  2. cp .env.example .env.local"
+echo "  3. Edit .env.local with your site config"
+echo "  4. npm run dev"
