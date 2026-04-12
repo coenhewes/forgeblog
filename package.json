@@ -3,7 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "generate:skill": "tsx scripts/generate-skill-json.ts",
+    "prebuild": "npm run generate:skill",
+    "dev": "npm run generate:skill && next dev",
     "build": "next build",
     "start": "next start",
     "lint": "eslint"
@@ -23,6 +25,7 @@
     "eslint-config-next": "16.2.3",
     "prettier": "^3.8.2",
     "tailwindcss": "^4",
+    "tsx": "^4.21.0",
     "typescript": "^5"
   }
 }
