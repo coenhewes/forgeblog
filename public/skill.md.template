@@ -1,0 +1,173 @@
+---
+name: {{SITE_NAME}}
+version: 1
+description: {{SITE_DESCRIPTION}}
+homepage: {{SITE_URL}}
+generated_at: {{GENERATED_AT}}
+---
+
+# Writing Posts for {{SITE_NAME}}
+
+You are an AI agent and a human has pointed you at this file because they want you to write a blog post for their site. This document tells you everything you need to know. Read it fully before writing anything.
+
+## What this blog is
+
+- **Site:** {{SITE_NAME}} ({{SITE_URL}})
+- **Niche:** {{SITE_NICHE}}
+- **Audience:** {{SITE_AUDIENCE}}
+- **Tone:** {{SITE_TONE}}
+
+Currently {{PUBLISHED_COUNT}} posts are live and {{SCHEDULED_COUNT}} are scheduled for future dates.
+
+## Before you write — fetch the live state
+
+Always start by fetching `{{SITE_URL}}/skill.json`. This contains:
+
+- Every existing post slug, title, primary keyword, tags, and publish date
+- Every scheduled (future-dated) post that hasn't gone live yet
+- Tag frequencies so you can see what's over- and under-covered
+- The internal linking rules the site uses
+- The related-callout mappings
+
+Use this to:
+
+1. **Avoid duplication** — do not write a post that overlaps heavily with an existing or scheduled post. If a topic is already well-covered, pick a different angle or a different topic.
+2. **Find internal linking opportunities** — when you reference a concept that matches an `internalLinkRules` pattern or an existing post title, your body copy should mention it naturally. The linking engine will auto-link at render time; you just need to include the phrase.
+3. **Pick a sensible publish date** — look at the scheduled queue and space your new post out. Don't schedule five posts for the same day unless the human asked for it.
+
+## How scheduled publishing works
+
+Every post has a `publishedAt` field (ISO 8601). At build time, posts whose `publishedAt` is in the future are filtered out — they exist in the code but don't appear on the site. A GitHub Actions cron triggers a Vercel rebuild once a day, so any post whose date has passed becomes live automatically.
+
+**This means:** you can write ten posts today with `publishedAt` spread over the next ten weeks, commit them all at once, and they will appear one at a time. You do not need to come back later. The human does not need to do anything.
+
+When you write a post, use a date in ISO format with a UTC time, e.g. `2026-06-15T06:00:00.000Z`. Match the time to 06:00 UTC by default so posts go live shortly after the daily cron fires.
+
+## The post schema — this is non-negotiable
+
+Every post is a TypeScript object that conforms to this type. You must produce objects that match it exactly. Missing required fields will fail type checking and break the build.
+
+```ts
+type BlogPost = {
+  slug: string;                    // kebab-case, unique, URL-safe
+  title: string;                   // 50-70 chars ideal for SEO
+  subtitle?: string;               // optional, 60-120 chars
+  description: string;             // meta description, 140-160 chars
+  excerpt: string;                 // list-page preview, 1-2 sentences
+  heroImage: string;               // URL or /public path
+  heroImageAlt: string;            // describe the image for screen readers
+  publishedAt: string;             // ISO 8601, future date = scheduled
+  updatedAt: string;               // ISO 8601, same as publishedAt for new posts
+  readingTime: string;             // e.g. "7 min read"
+  featured?: boolean;              // default false
+  tags: string[];                  // 3-6 tags, reuse existing ones where sensible
+  keywords: string[];              // 5-10 keywords for SEO
+  primaryKeyword: string;          // the single keyword this post targets
+  author: { name: string; role?: string; url?: string };
+  stats?: Array<{                  // 3 metric cards shown near top of post
+    label: string;                 // e.g. "Average read time"
+    value: string;                 // e.g. "7 minutes"
+    description?: string;          // optional sub-line
+  }>;
+  sections: Array<{                // the article body — REQUIRED
+    label?: string;                // small eyebrow label above the heading
+    heading: string;               // H2
+    paragraphs: string[];          // 2-5 paragraphs per section
+    highlights?: string[];         // optional pull-quotes / callouts
+    bullets?: string[];            // optional bullet list at end of section
+  }>;
+  checklist?: Array<{              // action items for the reader
+    title: string;
+    description: string;
+  }>;
+  takeaways?: string[];            // 3-6 key points
+  faqs?: Array<{                   // 4-8 Q&A pairs, used for FAQPage schema
+    question: string;
+    answer: string;
+  }>;
+};
+```
+
+## Quality rules — follow these exactly
+
+**Structure**
+
+- 5 to 8 `sections`. Each section is a self-contained part of the argument with an H2 heading.
+- 2 to 5 paragraphs per section. Paragraphs are 2 to 5 sentences. No one-sentence paragraphs.
+- 3 stats cards (not 2, not 4). Make them concrete and specific — real numbers, not vague claims.
+- 3 to 6 checklist items. Each is an action the reader can take today.
+- 4 to 6 takeaways. Short, punchy, one sentence each.
+- 4 to 8 FAQs. These become FAQPage schema and show up as rich results in Google, so write them as real questions a reader would search, not marketing questions.
+
+**Writing**
+
+- Match the site tone exactly: {{SITE_TONE}}
+- No hedging phrases ("it's worth noting", "in today's fast-paced world", "dive deep"). No LLM tells.
+- No em-dashes as a stylistic crutch. Use them deliberately or not at all.
+- Contractions are fine. Be readable.
+- Claims need specifics. "Faster" means nothing; "38% faster" means something. If you don't have real numbers, rephrase rather than invent.
+- Do not invent quotes, studies, or sources. If you need a citation, say "according to the official documentation" or similar — never fabricate a URL or author.
+- Do not write in the first person plural ("we believe", "our team"). Write as the named author from the site config, or as a knowledgeable guide.
+
+**SEO**
+
+- `primaryKeyword` must appear in the title, the first paragraph of the first section, at least one H2, and the meta description.
+- Title should be compelling AND contain the primary keyword. Not just "Primary Keyword: A Guide".
+- `description` is the meta description — write it for humans, not keyword-stuffed.
+- `keywords` are the full set this post should rank for. Include semantic variants, not just the primary keyword repeated.
+- `tags` are taxonomic labels. Reuse tags from `skill.json` where they fit. Don't invent a new tag if an existing one works.
+
+**Internal linking**
+
+- Fetch `skill.json` and look at `internalLinkRules` and the list of existing post titles.
+- When writing paragraphs, naturally mention concepts that match link rules or existing post titles. Don't force them — if they don't fit, skip them.
+- Do not write link markdown yourself. The site's linking engine converts plain text into links automatically at render time. Your job is to include the phrases in plain text.
+
+**What makes a good post on this site**
+
+Posts on this site are not listicles. They are not "ultimate guides" that try to cover everything. Each post has a clear thesis, a defined scope, and gets out of the reader's way once the point is made. If you can't state the post's argument in one sentence, it's not ready to write.
+
+## Workflow — follow this exactly
+
+1. **Clarify the brief.** The human has told you what they want. If anything is ambiguous (topic scope, publish date, tone), ask once before writing. Don't guess on structural decisions.
+2. **Fetch `{{SITE_URL}}/skill.json`.** Review existing posts, scheduled posts, tags, and link rules.
+3. **Decide the angle.** Confirm your topic does not duplicate an existing or scheduled post. Pick a primary keyword and a one-sentence thesis.
+4. **Pick a publish date.** Look at the scheduled queue and choose a date that spaces the post sensibly. Use 06:00 UTC.
+5. **Draft the post as a TypeScript object.** Match the `BlogPost` type exactly. Do not skip optional sections unless there's a reason — `stats`, `checklist`, `takeaways`, and `faqs` all make the post stronger.
+6. **Validate.** Check: slug is unique and kebab-case, all required fields are present, section counts match the rules above, dates are ISO 8601 UTC, primary keyword appears where it should.
+7. **Append to `src/content/blogPosts.ts`.** The posts array is a single file. Add your new post object to the array. Do not reformat existing posts. Do not change the file structure.
+8. **Run `npm run build` locally if you can.** If the build fails, fix the error and try again. Type errors almost always mean you missed a required field.
+9. **Commit.** Use a commit message like `Add post: {title}`. If you're on a branch, push and open a PR. If you're committing directly to main, the daily cron will pick the post up on its scheduled date.
+10. **Report back.** Tell the human: the slug, the publish date, a one-line summary of the angle, and whether the build passed.
+
+## What not to do
+
+- Do not create new files under `src/content/` other than appending to `blogPosts.ts`.
+- Do not edit `internalLinks.ts` or `relatedLinks.ts` unless the human explicitly asked.
+- Do not edit any file under `src/app/`, `src/components/`, or `src/lib/`.
+- Do not change `package.json`, `tsconfig.json`, or any workflow file.
+- Do not invent new fields on the `BlogPost` type. If you want to add a field, tell the human and stop.
+- Do not add tracking pixels, affiliate links, or any third-party scripts.
+- Do not reproduce copyrighted material. Do not quote articles or books at length.
+- Do not publish immediately (today's date) unless the human asked for it. Default to future-dating so posts join the scheduled queue.
+
+## Where to find things
+
+| What | Where |
+|------|-------|
+| Live blog state (posts, tags, links) | `{{SITE_URL}}/skill.json` |
+| Post data source | `src/content/blogPosts.ts` |
+| Post type definition | `src/lib/types.ts` |
+| Internal link rules | `src/content/internalLinks.ts` |
+| Related callouts | `src/content/relatedLinks.ts` |
+| Scheduled deploy workflow | `.github/workflows/scheduled-deploy.yml` |
+
+## Questions humans will ask you
+
+- *"Write me 5 posts about X, one per week starting next Monday."* — Fetch skill.json, pick 5 non-overlapping angles on X, draft them all, space `publishedAt` one week apart, commit as a batch.
+- *"What's already been written about X?"* — Fetch skill.json and search the `posts` array by title, tags, and primary keyword. Report back.
+- *"Fill the scheduled queue for the next month."* — Fetch skill.json, see what's already scheduled, draft posts to fill any empty slots with a sensible cadence.
+
+---
+
+If anything in this document contradicts what the human asked for, ask them — don't assume. This file is the default; their instructions override it.
