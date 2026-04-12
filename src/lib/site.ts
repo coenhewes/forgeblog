@@ -1,18 +1,19 @@
 /** Consolidated site config, read from env at build time. */
 export const site = {
-  url: process.env.SITE_URL ?? "https://example.com",
-  name: process.env.SITE_NAME ?? "My Blog",
+  url: process.env.SITE_URL ?? "https://forgeblog-mauve.vercel.app",
+  name: process.env.SITE_NAME ?? "ForgeBlog",
   description:
-    process.env.SITE_DESCRIPTION ?? "A blog built with ForgeBlog.",
+    process.env.SITE_DESCRIPTION ??
+    "A Next.js blog template with scheduled publishing and a machine-readable agent skill layer.",
   niche: process.env.SITE_NICHE ?? "General",
   audience: process.env.SITE_AUDIENCE ?? "Readers",
   tone: process.env.SITE_TONE ?? "Direct and practical.",
   repoUrl:
     process.env.SITE_REPO_URL ??
-    "https://github.com/yourname/forgeblog",
+    "https://github.com/coenhewes/forgeblog",
   author: {
-    name: process.env.SITE_AUTHOR_NAME ?? "Author",
-    url: process.env.SITE_AUTHOR_URL ?? "https://example.com",
+    name: process.env.SITE_AUTHOR_NAME ?? "Coen Hewes",
+    url: process.env.SITE_AUTHOR_URL ?? "https://github.com/coenhewes",
   },
 };
 

@@ -13,7 +13,7 @@ A Next.js blog template with automated scheduled publishing and a built-in agent
 ## Quick start
 
 ```bash
-git clone https://github.com/your-username/forgeblog.git
+git clone https://github.com/coenhewes/forgeblog.git
 cd forgeblog
 npm install
 cp .env.example .env.local   # edit with your site details
@@ -68,7 +68,7 @@ This template ships with a machine-readable instruction manual at `/skill.md` an
 
 **Usage:** Paste this into your agent:
 
-> *Read https://yourblog.com/skill.md and follow the instructions to write and commit 5 posts about [topic], one per week starting next Monday.*
+> *Read https://forgeblog-mauve.vercel.app/skill.md and follow the instructions to write and commit 5 posts about [topic], one per week starting next Monday.*
 
 That's it. The agent fetches the manual, fetches the live JSON state to see what's already been written, drafts posts that match the schema, appends them to `blogPosts.ts`, and commits. The scheduled deploy workflow takes it from there.
 

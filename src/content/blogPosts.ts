@@ -31,7 +31,7 @@ export const blogPosts: BlogPost[] = [
       "build time rendering",
     ],
     primaryKeyword: "static site generation",
-    author: { name: "Alex Johnson", role: "Developer", url: "https://example.com" },
+    author: { name: "Coen Hewes", role: "Developer", url: "https://github.com/coenhewes" },
     stats: [
       {
         label: "Faster TTFB",
@@ -144,7 +144,7 @@ export const blogPosts: BlogPost[] = [
       "SEO markup",
     ],
     primaryKeyword: "structured data",
-    author: { name: "Alex Johnson", role: "Developer", url: "https://example.com" },
+    author: { name: "Coen Hewes", role: "Developer", url: "https://github.com/coenhewes" },
     sections: [
       {
         heading: "What is structured data?",
@@ -221,7 +221,7 @@ export const blogPosts: BlogPost[] = [
       "CI/CD blog",
     ],
     primaryKeyword: "automated content publishing",
-    author: { name: "Alex Johnson", role: "Developer", url: "https://example.com" },
+    author: { name: "Coen Hewes", role: "Developer", url: "https://github.com/coenhewes" },
     stats: [
       {
         label: "Time saved",

@@ -65,7 +65,7 @@ export default function Home() {
                   View on GitHub
                 </a>
                 <Link
-                  href="/blog"
+                  href="/docs"
                   className="flex h-10 items-center justify-center rounded-md border border-neutral-200 px-4 text-sm font-medium text-neutral-700 transition-colors duration-150 hover:bg-neutral-100 dark:border-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-900"
                 >
                   Read the docs
