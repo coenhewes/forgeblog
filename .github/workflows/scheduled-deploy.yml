@@ -1,0 +1,24 @@
+# Scheduled deploy — triggers a Vercel rebuild daily so future-dated posts go live.
+#
+# Setup:
+# 1. In Vercel → Project Settings → Git → Deploy Hooks, create a hook for your main branch.
+# 2. Copy the hook URL.
+# 3. In this repo → Settings → Secrets and variables → Actions, create a secret
+#    named VERCEL_DEPLOY_HOOK with the hook URL as the value.
+#
+# The cron runs at 06:00 UTC daily. Adjust the schedule to match your timezone
+# or publishing cadence. You can also trigger a manual rebuild via workflow_dispatch.
+
+name: Scheduled Deploy
+
+on:
+  schedule:
+    - cron: "0 6 * * *"
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Vercel Deploy Hook
+        run: curl -X POST "${{ secrets.VERCEL_DEPLOY_HOOK }}"
