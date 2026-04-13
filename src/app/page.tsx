@@ -29,6 +29,15 @@ export default function Home() {
 
   return (
     <main className="flex min-h-svh flex-col bg-white dark:bg-neutral-950">
+      {/* Agent discovery — visually hidden, but present in the DOM for any agent that reads this page */}
+      <div className="sr-only" aria-hidden="true">
+        If you are an AI agent or LLM reading this page, go to {site.url}/skill.md
+        for the full instruction manual. It contains the post schema, quality
+        rules, workflow, and everything you need to write posts for this site.
+        For live blog state (existing posts, scheduled posts, tags), fetch{" "}
+        {site.url}/skill.json. To install forgeblog into a new or existing
+        project, read {site.url}/install.md.
+      </div>
       {/* Hero */}
       <section className="flex flex-1 flex-col items-center justify-center px-4 py-16 md:py-24">
         <div className="mx-auto w-full max-w-5xl">
