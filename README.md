@@ -1,13 +1,19 @@
 # forgeblog
 
-A Next.js blog template with automated scheduled publishing and a built-in agent skill layer — the first blog starter designed for vibe-coding with LLMs.
+A Next.js blog template with automated scheduled publishing and a built-in agent skill layer. Posts live in a single TypeScript file, are filtered by date at build time, and go live automatically via a daily cron rebuild. Point any LLM agent at your site's `/skill.md` and it can write, format, and schedule posts without hand-holding.
 
-<!-- screenshot placeholder: add a screenshot or GIF of the blog here -->
+## Live examples
+
+- [forgelogbooks.com/blog](https://www.forgelogbooks.com/blog) — fitness logbook content, fully agent-written
+- [trycornerman.com/blog](https://trycornerman.com/blog) — boxing training platform blog
+
+Both are running stock forgeblog with no modifications to the core template.
 
 ## Why this exists
 
-- **Write once, publish on schedule.** Add posts with future dates and they go live automatically via a daily rebuild.
-- **SEO out of the box.** JSON-LD structured data, dynamic sitemap, OG tags, and canonical URLs — all generated from your post data.
+- **Write once, publish on schedule.** Add posts with future dates and they go live automatically via a daily rebuild. No manual publishing step.
+- **Agent-ready from day one.** A machine-readable skill layer (`/skill.md` + `/skill.json`) lets any LLM agent understand your blog's schema, existing content, and tone — then write correctly-formatted posts autonomously.
+- **SEO out of the box.** JSON-LD structured data (BlogPosting, FAQPage, BreadcrumbList), dynamic sitemap, OG tags, and canonical URLs — all generated from your post data.
 - **Zero infrastructure.** Posts live in a single TypeScript file. No database, no CMS, no API layer.
 
 ## Quick start
@@ -68,7 +74,7 @@ This template ships with a machine-readable instruction manual at `/skill.md` an
 
 **Usage:** Paste this into your agent:
 
-> *Read https://forgeblog-mauve.vercel.app/skill.md and follow the instructions to write and commit 5 posts about [topic], one per week starting next Monday.*
+> *Read https://your-site.com/skill.md and follow the instructions to write and commit 5 posts about [topic], one per week starting next Monday.*
 
 That's it. The agent fetches the manual, fetches the live JSON state to see what's already been written, drafts posts that match the schema, appends them to `blogPosts.ts`, and commits. The scheduled deploy workflow takes it from there.
 
@@ -96,6 +102,22 @@ Every push to `main` also triggers a Vercel build, so you can publish immediatel
 
 ## Customising
 
+### Post format
+
+The renderer only requires `sections` for the article body. The optional blocks — `stats`, `checklist`, `takeaways`, and `faqs` — are each independently conditional. Omit any of them and the renderer skips that block cleanly. A minimal essay-style post needs just the required fields plus a `sections` array. See the [docs page](/docs) for a full minimal example.
+
+### Agent quality rules
+
+The skill manual (`public/skill.md.template`) tells agents to write 5–8 sections, exactly 3 stats cards, 3–6 checklist items, and 4–8 FAQs. These are best-practice ranges for rich, structured posts — the renderer does not enforce them. To allow looser formats (essays, interviews, short-form), edit the "Quality rules" section of the template. See the [docs](/docs) for the specific lines to change.
+
+### Renderer layout
+
+The article renderer (`src/components/blog/BlogArticlePage.tsx`) renders blocks in a fixed order: header, hero image, share buttons, stats cards, body sections, checklist, takeaways, related callout, FAQ. Each block is a self-contained conditional chunk — reorder, remove, or add new blocks by editing that component.
+
+### Extending the post type
+
+To add a new field: (1) add it to the `BlogPost` type in `src/lib/types.ts` (mark optional with `?`), (2) render it conditionally in `BlogArticlePage.tsx`, (3) document it in `public/skill.md.template` so agents know it exists.
+
 ### Internal links
 
 Edit `src/content/internalLinks.ts` to add regex-based rules that automatically convert matching text in your posts into internal links. See the file for examples and guidelines.
@@ -106,11 +128,19 @@ Edit `src/content/relatedLinks.ts` to map specific post slugs to callout cards t
 
 ### Styling
 
-The template uses Tailwind CSS with a neutral zinc palette and system fonts. Dark mode is automatic via `prefers-color-scheme`.
+The template uses Tailwind CSS with a neutral zinc palette and Geist fonts. Dark mode is automatic via `prefers-color-scheme`.
 
 - Edit `src/app/globals.css` to change theme colours.
-- To add a custom font, import it in `layout.tsx` (e.g. via `next/font/google`) and update the font-family in `globals.css`.
+- To add a custom font, import it in `layout.tsx` via `next/font/google` and update the font-family in `globals.css`.
 - Article body content uses `@tailwindcss/typography` for prose styling.
+
+### Pagination
+
+The blog list shows 9 posts per page. Change the `POSTS_PER_PAGE` constant at the top of `src/components/blog/BlogListPage.tsx`.
+
+### Structured data
+
+JSON-LD schemas are built in `src/components/StructuredData.tsx`. It exports helpers for BlogPosting, FAQPage, BreadcrumbList, Organization, and CollectionPage schemas. FAQPage is only generated when a post includes `faqs`. Edit the relevant builder function to modify or add schema types.
 
 ## What this is not
 
