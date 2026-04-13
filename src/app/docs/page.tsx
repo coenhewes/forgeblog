@@ -253,6 +253,122 @@ npm run dev`}</code>
           topics, or house style notes.
         </p>
 
+        <h3>Post format</h3>
+        <p>
+          The renderer (<code>src/components/blog/BlogArticlePage.tsx</code>)
+          only requires <code>sections</code> for the article body. Every
+          other block — <code>stats</code>, <code>checklist</code>,{" "}
+          <code>takeaways</code>, and <code>faqs</code> — is conditional and
+          renders nothing when omitted. A minimal essay-style post needs only
+          the required fields plus a <code>sections</code> array:
+        </p>
+        <pre>
+          <code>{`{
+  slug: "my-essay",
+  title: "An Essay-Style Post",
+  description: "A short meta description.",
+  excerpt: "Preview text for the blog list.",
+  heroImage: "https://images.unsplash.com/photo-example?w=1200&h=630&fit=crop",
+  heroImageAlt: "Description of the image",
+  publishedAt: "2026-06-01T06:00:00Z",
+  updatedAt: "2026-06-01T06:00:00Z",
+  readingTime: "4 min read",
+  tags: ["essays"],
+  keywords: ["essay writing"],
+  primaryKeyword: "essay writing",
+  author: { name: "Your Name" },
+  sections: [
+    { heading: "Opening", paragraphs: ["First paragraph...", "Second paragraph..."] },
+    { heading: "The argument", paragraphs: ["..."] },
+  ],
+  // no stats, no checklist, no takeaways, no faqs — the renderer skips them
+}`}</code>
+        </pre>
+        <p>
+          To get the full structured layout (stats cards, action checklist,
+          key takeaways, FAQ accordion), include those optional fields. You
+          can mix and match — for example, include <code>faqs</code> but skip{" "}
+          <code>stats</code>. Each block is independent.
+        </p>
+
+        <h3>Agent quality rules</h3>
+        <p>
+          The skill manual at{" "}
+          <code>public/skill.md.template</code> tells agents to write 5–8
+          sections, exactly 3 stats cards, 3–6 checklist items, and 4–8 FAQs.
+          These ranges are best-practice guidance for rich, structured posts —
+          the renderer does not enforce them. If you want agents to write
+          looser essay-style or interview posts, edit the &ldquo;Quality
+          rules&rdquo; section of the template:
+        </p>
+        <ul>
+          <li>
+            Change <code>5 to 8 sections</code> to <code>1 to 8 sections</code>{" "}
+            to allow shorter posts
+          </li>
+          <li>
+            Remove or soften the <code>3 stats cards (not 2, not 4)</code> line
+            to make stats truly optional
+          </li>
+          <li>
+            Update step 5 in the workflow section — it currently says
+            &ldquo;do not skip optional sections unless there&apos;s a
+            reason&rdquo;, which nudges agents toward the full structure
+          </li>
+        </ul>
+
+        <h3>Renderer layout</h3>
+        <p>
+          The article renderer at{" "}
+          <code>src/components/blog/BlogArticlePage.tsx</code> renders
+          sections in this fixed order: header, hero image, share buttons,
+          stats cards, body sections, checklist, takeaways, related callout,
+          FAQ. To reorder, remove, or add sections, edit that component
+          directly. Each block is a self-contained JSX chunk guarded by a
+          conditional check.
+        </p>
+
+        <h3>Extending the post type</h3>
+        <p>
+          To add a new field (e.g. a <code>videoUrl</code> for embedded
+          video), update three files:
+        </p>
+        <ol>
+          <li>
+            Add the field to the <code>BlogPost</code> type in{" "}
+            <code>src/lib/types.ts</code> (mark it optional with{" "}
+            <code>?</code> to avoid breaking existing posts)
+          </li>
+          <li>
+            Render it in{" "}
+            <code>src/components/blog/BlogArticlePage.tsx</code> with a
+            conditional guard (e.g.{" "}
+            <code>{"post.videoUrl && (<div>...</div>)"}</code>)
+          </li>
+          <li>
+            Document it in <code>public/skill.md.template</code> so agents
+            know the field exists and when to use it
+          </li>
+        </ol>
+
+        <h3>Pagination</h3>
+        <p>
+          The blog list shows 9 posts per page. To change this, edit the{" "}
+          <code>POSTS_PER_PAGE</code> constant at the top of{" "}
+          <code>src/components/blog/BlogListPage.tsx</code>.
+        </p>
+
+        <h3>Structured data</h3>
+        <p>
+          JSON-LD schemas are built in{" "}
+          <code>src/components/StructuredData.tsx</code>. It exports helpers
+          for BlogPosting, FAQPage, BreadcrumbList, Organization, and
+          CollectionPage schemas. FAQPage is only generated when a post
+          includes <code>faqs</code>. To modify the schemas (e.g. add a{" "}
+          <code>VideoObject</code> for a new video field), edit the relevant
+          builder function in that file.
+        </p>
+
         <h2>Project structure</h2>
         <pre>
           <code>{`src/
