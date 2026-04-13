@@ -143,7 +143,10 @@ npm run dev`}</code>
   sections: [
     {
       heading: "Section title",
-      paragraphs: ["Your content goes here."],
+      paragraphs: [
+        "Paragraphs support **bold**, *italic*, \`inline code\`, and [links](https://example.com).",
+        "Each string in the array is rendered as a separate paragraph."
+      ],
     },
   ],
 }`}</code>
@@ -153,6 +156,48 @@ npm run dev`}</code>
           <code>takeaways</code>, and <code>faqs</code> add extra sections to
           the article. FAQs also generate FAQPage structured data for Google
           rich results.
+        </p>
+
+        <h3>Inline formatting</h3>
+        <p>
+          All text fields in the article body support inline markdown
+          formatting. This includes paragraphs, highlights, bullets, checklist
+          items, takeaways, and FAQ answers.
+        </p>
+        <table>
+          <thead>
+            <tr>
+              <th>Syntax</th>
+              <th>Renders as</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>**bold text**</code></td>
+              <td><strong>bold text</strong></td>
+            </tr>
+            <tr>
+              <td><code>*italic text*</code></td>
+              <td><em>italic text</em></td>
+            </tr>
+            <tr>
+              <td><code>`code`</code></td>
+              <td><code>code</code></td>
+            </tr>
+            <tr>
+              <td><code>[text](url)</code></td>
+              <td>External link (opens in new tab)</td>
+            </tr>
+          </tbody>
+        </table>
+        <p>
+          Do <strong>not</strong> use inline formatting in{" "}
+          <code>title</code>, <code>description</code>, <code>excerpt</code>,{" "}
+          <code>heading</code>, or <code>heroImageAlt</code> — these are used
+          in meta tags and heading elements where markdown syntax would render
+          as literal characters. Internal links are handled automatically by
+          the linking engine; use <code>[text](url)</code> only for external
+          URLs.
         </p>
 
         <h2>The agent skill layer</h2>
@@ -278,7 +323,13 @@ npm run dev`}</code>
   primaryKeyword: "essay writing",
   author: { name: "Your Name" },
   sections: [
-    { heading: "Opening", paragraphs: ["First paragraph...", "Second paragraph..."] },
+    {
+      heading: "Opening",
+      paragraphs: [
+        "Use **bold** for emphasis and \`code\` for technical terms.",
+        "Second paragraph with *italic* and a [link](https://example.com)."
+      ],
+    },
     { heading: "The argument", paragraphs: ["..."] },
   ],
   // no stats, no checklist, no takeaways, no faqs — the renderer skips them
@@ -288,7 +339,10 @@ npm run dev`}</code>
           To get the full structured layout (stats cards, action checklist,
           key takeaways, FAQ accordion), include those optional fields. You
           can mix and match — for example, include <code>faqs</code> but skip{" "}
-          <code>stats</code>. Each block is independent.
+          <code>stats</code>. Each block is independent. All text in the
+          article body supports inline formatting (<code>**bold**</code>,{" "}
+          <code>*italic*</code>, <code>`code`</code>,{" "}
+          <code>[text](url)</code>).
         </p>
 
         <h3>Agent quality rules</h3>
@@ -326,6 +380,30 @@ npm run dev`}</code>
           FAQ. To reorder, remove, or add sections, edit that component
           directly. Each block is a self-contained JSX chunk guarded by a
           conditional check.
+        </p>
+
+        <h3>Section separation</h3>
+        <p>
+          Body sections are separated by a subtle border and padding
+          (<code>border-t border-zinc-200 pt-6</code>). To customise:
+        </p>
+        <ul>
+          <li>
+            Change <code>pt-6</code> to <code>pt-4</code> or{" "}
+            <code>pt-10</code> for tighter/looser spacing
+          </li>
+          <li>
+            Swap <code>border-zinc-200</code> for a different border colour
+          </li>
+          <li>
+            Remove <code>border-t</code> entirely for whitespace-only
+            separation
+          </li>
+        </ul>
+        <p>
+          The classes are on the <code>{"<section>"}</code> element inside{" "}
+          <code>BlogArticlePage.tsx</code> (look for the{" "}
+          <code>sectionIdx &gt; 0</code> conditional).
         </p>
 
         <h3>Extending the post type</h3>

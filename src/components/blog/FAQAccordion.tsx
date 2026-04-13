@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { InlineText } from "@/components/blog/InlineFormat";
 
 /** Client-side FAQ accordion with expand/collapse. */
 export function FAQAccordion({
@@ -35,7 +36,7 @@ export function FAQAccordion({
             </button>
             {isOpen && (
               <p className="pb-4 text-sm text-zinc-600 dark:text-zinc-400">
-                {faq.answer}
+                <InlineText text={faq.answer} />
               </p>
             )}
           </div>

@@ -52,8 +52,8 @@ type BlogPost = {
   slug: string;                    // kebab-case, unique, URL-safe
   title: string;                   // 50-70 chars ideal for SEO
   subtitle?: string;               // optional, 60-120 chars
-  description: string;             // meta description, 140-160 chars
-  excerpt: string;                 // list-page preview, 1-2 sentences
+  description: string;             // meta description, 140-160 chars (plain text, no formatting)
+  excerpt: string;                 // list-page preview, 1-2 sentences (plain text, no formatting)
   heroImage: string;               // URL or /public path
   heroImageAlt: string;            // describe the image for screen readers
   publishedAt: string;             // ISO 8601, future date = scheduled
@@ -71,22 +71,37 @@ type BlogPost = {
   }>;
   sections: Array<{                // the article body — REQUIRED
     label?: string;                // small eyebrow label above the heading
-    heading: string;               // H2
-    paragraphs: string[];          // 2-5 paragraphs per section
-    highlights?: string[];         // optional pull-quotes / callouts
-    bullets?: string[];            // optional bullet list at end of section
+    heading: string;               // H2 (plain text)
+    paragraphs: string[];          // 2-5 paragraphs per section — supports inline formatting
+    highlights?: string[];         // optional pull-quotes / callouts — supports inline formatting
+    bullets?: string[];            // optional bullet list at end of section — supports inline formatting
   }>;
   checklist?: Array<{              // action items for the reader
-    title: string;
-    description: string;
+    title: string;                 // supports inline formatting
+    description: string;           // supports inline formatting
   }>;
-  takeaways?: string[];            // 3-6 key points
+  takeaways?: string[];            // 3-6 key points — supports inline formatting
   faqs?: Array<{                   // 4-8 Q&A pairs, used for FAQPage schema
-    question: string;
-    answer: string;
+    question: string;              // plain text (rendered as button label)
+    answer: string;                // supports inline formatting
   }>;
 };
 ```
+
+### Inline formatting
+
+All body text fields (paragraphs, highlights, bullets, checklist items, takeaways, FAQ answers) support inline markdown:
+
+- `**bold text**` → **bold**
+- `*italic text*` → *italic*
+- `` `code` `` → inline code
+- `[text](url)` → external link (opens in new tab)
+
+Use formatting to emphasise key terms, reference code/commands, and link to external sources. Do not overuse it — one or two formatted spans per paragraph is enough. Nesting (e.g. bold inside italic) is not supported; keep formatting flat.
+
+**Important:** Do not use inline formatting in `title`, `description`, `excerpt`, `slug`, `heroImageAlt`, or `heading` fields. These are used in meta tags, URLs, and heading elements where markdown syntax would appear as literal characters.
+
+Internal links are handled separately by the linking engine — just mention matching phrases in plain text and they are auto-linked at render time. Do not use `[text](url)` for internal links.
 
 ## Quality rules — follow these exactly
 
@@ -117,11 +132,19 @@ type BlogPost = {
 - `keywords` are the full set this post should rank for. Include semantic variants, not just the primary keyword repeated.
 - `tags` are taxonomic labels. Reuse tags from `skill.json` where they fit. Don't invent a new tag if an existing one works.
 
+**Inline formatting**
+
+- Use `**bold**` to emphasise key terms or important concepts — one or two per paragraph at most.
+- Use `*italic*` sparingly for titles, introducing new terms, or subtle emphasis.
+- Use `` `code` `` for technical terms, commands, function names, file paths, and config values.
+- Use `[text](url)` for external references — link to docs, tools, or sources when they add value. Do not use this for internal links.
+- Do not format entire sentences. Formatting highlights a word or phrase, not a paragraph.
+
 **Internal linking**
 
 - Fetch `skill.json` and look at `internalLinkRules` and the list of existing post titles.
 - When writing paragraphs, naturally mention concepts that match link rules or existing post titles. Don't force them — if they don't fit, skip them.
-- Do not write link markdown yourself. The site's linking engine converts plain text into links automatically at render time. Your job is to include the phrases in plain text.
+- Do not use `[text](url)` markdown for internal links. The site's linking engine converts plain text into links automatically at render time. Your job is to include the matching phrases in plain text.
 
 **What makes a good post on this site**
 

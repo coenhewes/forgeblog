@@ -58,13 +58,29 @@ Open `src/content/blogPosts.ts` and add an object to the array. Here's a minimal
   sections: [
     {
       heading: "Section title",
-      paragraphs: ["Your content goes here."],
+      paragraphs: [
+        "Paragraphs support **bold**, *italic*, `inline code`, and [links](https://example.com).",
+        "Each string in the array is rendered as a separate paragraph."
+      ],
     },
   ],
 }
 ```
 
 See `src/lib/types.ts` for the full `BlogPost` type with all optional fields (stats, checklist, takeaways, FAQs).
+
+### Inline formatting
+
+All text fields in the article body (paragraphs, highlights, bullets, checklist items, takeaways, and FAQ answers) support inline markdown:
+
+| Syntax | Renders as |
+|--------|-----------|
+| `**bold text**` | **bold text** |
+| `*italic text*` | *italic text* |
+| `` `code` `` | `code` |
+| `[text](url)` | [text](url) (external link, opens in new tab) |
+
+Internal links are handled separately by the linking engine — just mention matching phrases in plain text and they are linked automatically. Nesting (e.g. bold inside italic) is not supported; keep formatting flat.
 
 ## Agent-readable skill layer (the vibe-coding workflow)
 
@@ -106,6 +122,8 @@ Every push to `main` also triggers a Vercel build, so you can publish immediatel
 
 The renderer only requires `sections` for the article body. The optional blocks — `stats`, `checklist`, `takeaways`, and `faqs` — are each independently conditional. Omit any of them and the renderer skips that block cleanly. A minimal essay-style post needs just the required fields plus a `sections` array. See the [docs page](/docs) for a full minimal example.
 
+All text fields in the article body support inline markdown: `**bold**`, `*italic*`, `` `code` ``, and `[text](url)` for external links. Internal links are handled automatically by the linking engine.
+
 ### Agent quality rules
 
 The skill manual (`public/skill.md.template`) tells agents to write 5–8 sections, exactly 3 stats cards, 3–6 checklist items, and 4–8 FAQs. These are best-practice ranges for rich, structured posts — the renderer does not enforce them. To allow looser formats (essays, interviews, short-form), edit the "Quality rules" section of the template. See the [docs](/docs) for the specific lines to change.
@@ -113,6 +131,10 @@ The skill manual (`public/skill.md.template`) tells agents to write 5–8 sectio
 ### Renderer layout
 
 The article renderer (`src/components/blog/BlogArticlePage.tsx`) renders blocks in a fixed order: header, hero image, share buttons, stats cards, body sections, checklist, takeaways, related callout, FAQ. Each block is a self-contained conditional chunk — reorder, remove, or add new blocks by editing that component.
+
+### Section separation
+
+Sections are separated by a subtle border and padding (`border-t border-zinc-200 pt-6`). To customise: change `pt-6` for tighter/looser spacing, swap `border-zinc-200` for a different colour, or remove `border-t` entirely for whitespace-only separation. The classes are on the `<section>` element inside `BlogArticlePage.tsx`.
 
 ### Extending the post type
 
