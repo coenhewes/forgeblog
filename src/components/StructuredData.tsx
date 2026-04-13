@@ -1,5 +1,6 @@
 import type { BlogPost } from "@/lib/types";
 import { SITE_URL, SITE_NAME, SITE_AUTHOR_NAME } from "@/lib/site";
+import { stripInlineMarkers } from "@/components/blog/InlineFormat";
 
 /** Renders a JSON-LD script tag. No-ops if data is null. */
 export function StructuredData({ data }: { data: object | null }) {
@@ -21,6 +22,7 @@ export function buildBlogPostingSchema(post: BlogPost): object {
     description: post.description,
     articleBody: post.sections
       .flatMap((s) => s.paragraphs)
+      .map(stripInlineMarkers)
       .join("\n\n"),
     datePublished: post.publishedAt,
     dateModified: post.updatedAt,
@@ -55,7 +57,7 @@ export function buildFAQPageSchema(post: BlogPost): object | null {
       name: faq.question,
       acceptedAnswer: {
         "@type": "Answer",
-        text: faq.answer,
+        text: stripInlineMarkers(faq.answer),
       },
     })),
   };

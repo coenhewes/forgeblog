@@ -1,17 +1,18 @@
 import Link from "next/link";
 import { internalLinkRules } from "@/content/internalLinks";
 import type { InternalLinkRule } from "@/content/internalLinks";
+import { formatInline } from "@/components/blog/InlineFormat";
 
 /**
- * Renders a plain text string with internal link rules applied.
+ * Renders a text string with internal link rules and inline formatting applied.
  *
- * Each rule's regex is tested against the text. Only the first match per rule
- * is replaced with a <Link>. Self-links (where the rule's href points to the
- * current post) are automatically skipped.
+ * Processing order: internal link rules are applied first (regex-based), then
+ * inline markdown formatting (**bold**, *italic*, `code`, [text](url)) is
+ * parsed within each remaining text segment.
  *
- * Tradeoffs: regex-based linking is fast and deterministic, but users are
- * responsible for avoiding overlapping patterns that could produce nested links
- * or unexpected matches.
+ * Each link rule's regex is tested against the text. Only the first match per
+ * rule is replaced with a <Link>. Self-links (where the rule's href points to
+ * the current post) are automatically skipped.
  */
 export function TextWithLinks({
   text,
@@ -21,7 +22,7 @@ export function TextWithLinks({
   currentSlug: string;
 }) {
   if (internalLinkRules.length === 0) {
-    return <>{text}</>;
+    return <>{formatInline(text)}</>;
   }
 
   const selfPath = `/blog/${currentSlug}`;
@@ -30,7 +31,7 @@ export function TextWithLinks({
   );
 
   if (applicableRules.length === 0) {
-    return <>{text}</>;
+    return <>{formatInline(text)}</>;
   }
 
   return <>{applyRules(text, applicableRules)}</>;
@@ -73,7 +74,7 @@ function applyRules(
 
   return segments.map((seg, i) =>
     typeof seg === "string" ? (
-      <span key={i}>{seg}</span>
+      <span key={i}>{formatInline(seg)}</span>
     ) : (
       <Link
         key={i}

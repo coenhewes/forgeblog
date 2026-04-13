@@ -54,33 +54,33 @@ export const blogPosts: BlogPost[] = [
         label: "Basics",
         heading: "What is static site generation?",
         paragraphs: [
-          "Static site generation (SSG) is a rendering strategy where HTML pages are generated at build time rather than on each request. The resulting files are plain HTML, CSS, and JavaScript that can be served from any CDN.",
+          "**Static site generation** (SSG) is a rendering strategy where HTML pages are generated at *build time* rather than on each request. The resulting files are plain HTML, CSS, and JavaScript that can be served from any CDN.",
           "Unlike server-side rendering, where every request triggers a render on the server, SSG does the heavy lifting once. The output is a set of static files that load almost instantly for the end user.",
         ],
         highlights: [
-          "Pages are generated once at build time",
+          "Pages are generated **once** at build time",
           "No server required at runtime — just a CDN",
-          "Ideal for content that doesn't change on every request",
+          "Ideal for content that *doesn't change* on every request",
         ],
       },
       {
         heading: "How SSG works in Next.js",
         paragraphs: [
-          "In Next.js, any page that exports a generateStaticParams function will be statically generated. At build time, Next.js calls your data-fetching logic, renders the page to HTML, and writes the result to disk.",
+          "In Next.js, any page that exports a `generateStaticParams` function will be statically generated. At build time, Next.js calls your data-fetching logic, renders the page to HTML, and writes the result to disk.",
           "These pre-rendered pages are then deployed to a CDN. When a user requests a page, the CDN serves the static file directly — no server-side computation needed.",
         ],
         bullets: [
-          "Define your routes with generateStaticParams",
+          "Define your routes with `generateStaticParams`",
           "Fetch data at build time, not at request time",
           "Deploy the output to any static hosting provider",
-          "Optionally use Incremental Static Regeneration to update pages without a full rebuild",
+          "Optionally use **Incremental Static Regeneration** to update pages without a full rebuild",
         ],
       },
       {
         heading: "When to choose SSG over SSR",
         paragraphs: [
           "SSG is the right choice when your content changes infrequently and can be pre-built. Blog posts, documentation, marketing pages, and product catalogs are all great candidates.",
-          "If your content changes on every request — personalised dashboards, real-time feeds — server-side rendering or client-side fetching is a better fit. The key question is: can this page be the same for every visitor?",
+          "If your content changes on every request — personalised dashboards, real-time feeds — **server-side rendering** or client-side fetching is a better fit. The key question is: can this page be the same for every visitor?",
         ],
       },
     ],
@@ -149,33 +149,33 @@ export const blogPosts: BlogPost[] = [
       {
         heading: "What is structured data?",
         paragraphs: [
-          "Structured data is a standardised format for describing the content of a web page to search engines. The most common format is JSON-LD (JavaScript Object Notation for Linked Data), embedded in a <script> tag in your HTML.",
-          "When Google encounters structured data, it can use it to generate rich results — enhanced search listings with star ratings, FAQ accordions, breadcrumbs, and more.",
+          "Structured data is a standardised format for describing the content of a web page to search engines. The most common format is **JSON-LD** (JavaScript Object Notation for Linked Data), embedded in a `<script>` tag in your HTML.",
+          "When Google encounters structured data, it can use it to generate *rich results* — enhanced search listings with star ratings, FAQ accordions, breadcrumbs, and more.",
         ],
       },
       {
         heading: "Common schema types you should know",
         paragraphs: [
-          "Schema.org defines hundreds of types, but a handful cover most use cases. Article and BlogPosting for content sites, Product and Offer for ecommerce, FAQPage for support content, and Organization for company info.",
+          "[Schema.org](https://schema.org) defines hundreds of types, but a handful cover most use cases. `Article` and `BlogPosting` for content sites, `Product` and `Offer` for ecommerce, `FAQPage` for support content, and `Organization` for company info.",
         ],
         bullets: [
-          "BlogPosting — for blog posts with author, date, and image",
-          "FAQPage — renders an expandable FAQ in search results",
-          "BreadcrumbList — shows a breadcrumb trail below the page title",
-          "Organization — provides company details in the knowledge panel",
+          "`BlogPosting` — for blog posts with author, date, and image",
+          "`FAQPage` — renders an expandable FAQ in search results",
+          "`BreadcrumbList` — shows a breadcrumb trail below the page title",
+          "`Organization` — provides company details in the knowledge panel",
         ],
       },
       {
         heading: "Implementing JSON-LD in Next.js",
         paragraphs: [
-          "The cleanest approach is to create a helper function that builds the JSON-LD object, then render it in a <script type='application/ld+json'> tag. Keep the schema construction separate from the rendering so you can test it independently.",
-          "In a Next.js App Router project, you can include the script tag directly in your page or layout component. Since it is a server component, the JSON-LD is embedded in the initial HTML — no client-side JavaScript required.",
+          "The cleanest approach is to create a helper function that builds the JSON-LD object, then render it in a `<script type=\"application/ld+json\">` tag. Keep the schema construction separate from the rendering so you can test it independently.",
+          "In a Next.js App Router project, you can include the script tag directly in your page or layout component. Since it is a **server component**, the JSON-LD is embedded in the initial HTML — no client-side JavaScript required.",
         ],
       },
       {
         heading: "Testing and validating your markup",
         paragraphs: [
-          "Google provides a Rich Results Test that checks whether your structured data is eligible for enhanced search features. Schema.org also maintains a validator for checking syntax.",
+          "Google provides a [Rich Results Test](https://search.google.com/test/rich-results) that checks whether your structured data is eligible for enhanced search features. Schema.org also maintains a validator for checking syntax.",
           "Always test after deploying. The most common issues are missing required fields, incorrect data types, and mismatched URLs between your canonical tag and the structured data.",
         ],
       },
@@ -238,15 +238,15 @@ export const blogPosts: BlogPost[] = [
       {
         heading: "The problem with manual publishing",
         paragraphs: [
-          "Most static blogs require someone to click a deploy button or merge a PR to publish new content. This works fine for occasional posts, but it breaks down when you want to schedule content in advance.",
+          "Most static blogs require someone to click a deploy button or merge a PR to publish new content. This works fine for occasional posts, but it **breaks down** when you want to schedule content in advance.",
           "If you are writing posts in batches — or using an LLM to generate them — you need a way to queue posts for future dates and have them go live automatically.",
         ],
       },
       {
         heading: "How scheduled deploys work",
         paragraphs: [
-          "The solution is surprisingly simple. Each post has a publishedAt date. At build time, a filter excludes any post whose date is in the future. A daily cron job triggers a fresh build, and the filter re-evaluates — any post whose date has now passed appears on the site.",
-          "The cron job is a GitHub Actions workflow that fires a Vercel Deploy Hook via curl. The entire workflow is about five lines of YAML.",
+          "The solution is surprisingly simple. Each post has a `publishedAt` date. At build time, a filter excludes any post whose date is in the future. A daily cron job triggers a fresh build, and the filter re-evaluates — any post whose date has now passed appears on the site.",
+          "The cron job is a GitHub Actions workflow that fires a **Vercel Deploy Hook** via `curl`. The entire workflow is about five lines of YAML.",
         ],
         highlights: [
           "Posts are filtered by date at build time",

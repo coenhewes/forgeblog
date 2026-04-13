@@ -6,6 +6,7 @@ import { SITE_URL } from "@/lib/site";
 import { relatedCallouts } from "@/content/relatedLinks";
 import { RelatedCallout } from "@/components/blog/RelatedCallout";
 import { TextWithLinks } from "@/components/blog/TextWithLinks";
+import { InlineText } from "@/components/blog/InlineFormat";
 import { FAQAccordion } from "@/components/blog/FAQAccordion";
 
 /** Full blog article page with all optional sections. */
@@ -122,10 +123,19 @@ export function BlogArticlePage({ post }: { post: BlogPost }) {
             </div>
           )}
 
-          {/* Body sections */}
+          {/* Body sections — border-t + pt on non-first sections creates visual
+              separation. Adjust pt-8 for tighter/looser spacing, or remove
+              border-t for whitespace-only separation. */}
           <div className="prose prose-zinc mt-10 max-w-none dark:prose-invert">
-            {post.sections.map((section) => (
-              <section key={section.heading}>
+            {post.sections.map((section, sectionIdx) => (
+              <section
+                key={section.heading}
+                className={
+                  sectionIdx > 0
+                    ? "border-t border-zinc-200 pt-6 dark:border-zinc-800"
+                    : undefined
+                }
+              >
                 {section.label && (
                   <p className="text-xs font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
                     {section.label}
@@ -151,7 +161,7 @@ export function BlogArticlePage({ post }: { post: BlogPost }) {
                           >
                             ✓
                           </span>
-                          {h}
+                          <InlineText text={h} />
                         </li>
                       ))}
                     </ul>
@@ -160,7 +170,9 @@ export function BlogArticlePage({ post }: { post: BlogPost }) {
                 {section.bullets && section.bullets.length > 0 && (
                   <ul>
                     {section.bullets.map((b, i) => (
-                      <li key={i}>{b}</li>
+                      <li key={i}>
+                        <InlineText text={b} />
+                      </li>
                     ))}
                   </ul>
                 )}
@@ -185,10 +197,10 @@ export function BlogArticlePage({ post }: { post: BlogPost }) {
                     </span>
                     <div>
                       <p className="font-medium text-zinc-900 dark:text-zinc-100">
-                        {item.title}
+                        <InlineText text={item.title} />
                       </p>
                       <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
-                        {item.description}
+                        <InlineText text={item.description} />
                       </p>
                     </div>
                   </div>
@@ -215,7 +227,7 @@ export function BlogArticlePage({ post }: { post: BlogPost }) {
                     >
                       &bull;
                     </span>
-                    {t}
+                    <InlineText text={t} />
                   </li>
                 ))}
               </ul>
